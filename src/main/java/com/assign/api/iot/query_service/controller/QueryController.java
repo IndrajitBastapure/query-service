@@ -26,7 +26,7 @@ public class QueryController {
     public QueryController(IoTDataService ioTDataService) {
         this.ioTDataService = ioTDataService;
     }
-    @Operation(summary = "Get minimum value for sensor data", description = "Fetches the minimum sensor reading for a specific sensor device type within a date range.")
+    @Operation(summary = "Get the minimum value of a specific sensor", description = "Fetches the minimum sensor reading for a specific sensor device type within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -38,7 +38,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()-> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get median value for sensor data", description = "Fetches the median sensor reading for a specific sensor device type within a date range.")
+    @Operation(summary = "Get the median value of a specific sensor", description = "Fetches the median sensor reading for a specific sensor device type within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -50,7 +50,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get maximum value for sensor data", description = "Fetches the maximum sensor reading for a specific sensor device type within a date range.")
+    @Operation(summary = "Get the maximum value of a specific sensor", description = "Fetches the maximum sensor reading for a specific sensor device type within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -62,7 +62,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get average value for sensor data", description = "Fetches the average sensor reading for a specific sensor device type within a date range.")
+    @Operation(summary = "Get the average value of a specific sensor", description = "Fetches the average sensor reading for a specific sensor device type within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -74,7 +74,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get minimum value for sensor data", description = "Fetches the minimum sensor reading for a provided group of sensor device types within a date range.")
+    @Operation(summary = "Get the minimum value of a group of sensors", description = "Fetches the minimum sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -87,7 +87,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()-> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get median value for sensor data", description = "Fetches the median sensor reading for a provided group of sensor device types within a date range.")
+    @Operation(summary = "Get the median value of a group of sensors", description = "Fetches the median sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -99,7 +99,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get maximum value for sensor data", description = "Fetches the maximum sensor reading for a provided group of sensor device types within a date range.")
+    @Operation(summary = "Get the maximum value of a group of sensors", description = "Fetches the maximum sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
@@ -111,7 +111,7 @@ public class QueryController {
                 .map(ResponseEntity::ok)
                 .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
-    @Operation(summary = "Get average value for sensor data", description = "Fetches the average sensor reading for a provided group of sensor device types within a date range.")
+    @Operation(summary = "Get the average value of a group of sensors", description = "Fetches the average sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Successful response", content = @Content(schema = @Schema(implementation = Double.class))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))

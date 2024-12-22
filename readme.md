@@ -20,4 +20,5 @@
 * Import Postman collection in Postman to test the query-service endpoints
 * Before making call to actual application endpoints first generate Authorization(AccessToken) through auth0 endpoint - Get auth0 AccessToken
 * Pass the generated accessToken as aAuthorization header while making call to the endpoints.
+* Additionally, all the endpoint specification and documentation can be accessed from http://localhost:8083/swagger-ui/index.html
 

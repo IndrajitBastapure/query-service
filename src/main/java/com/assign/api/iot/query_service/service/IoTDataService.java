@@ -1,6 +1,7 @@
 package com.assign.api.iot.query_service.service;
 
 import com.assign.api.iot.query_service.dto.IoTDataDTO;
+import com.assign.api.iot.query_service.exceptions.QueryServiceException;
 import com.assign.api.iot.query_service.mapper.IoTDataToIoTDataDTOConverter;
 import com.assign.api.iot.query_service.model.IoTData;
 import com.assign.api.iot.query_service.repository.IoTDataCustomRepository;
@@ -32,7 +33,7 @@ public class IoTDataService {
                 .map(converter::convert)
                 .mapToDouble(data-> data.getValue())
                 .min()
-                .orElse(0.0);
+                .orElseThrow(() -> new QueryServiceException("No data found for the specified sensor and time range"));
     }
 
     public Double getSensorDeviceDataMaxValue(String sensorDeviceType, Long startDate, Long endDate) {
@@ -42,7 +43,7 @@ public class IoTDataService {
                 .map(converter::convert)
                 .mapToDouble(data-> data.getValue())
                 .max()
-                .orElse(0.0);
+                .orElseThrow(() -> new QueryServiceException("No data found for the specified sensor and time range"));
     }
 
     public Double getSensorDeviceDataMedianValue(String sensorDeviceType, Long startDate, Long endDate) {
@@ -57,7 +58,8 @@ public class IoTDataService {
         return sensorDeviceData.stream()
                 .map(converter::convert)
                 .mapToDouble(data-> data.getValue())
-                .average().orElse(0.0);
+                .average()
+                .orElseThrow(() -> new QueryServiceException("No data found for the specified sensor and time range"));
     }
 
     public Map<String, Double> getSensorDeviceDataMinValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
@@ -126,7 +128,7 @@ public class IoTDataService {
         double medianValue;
         int size = sortedValues.size();
         if (sortedValues == null || sortedValues.isEmpty()) {
-            throw new IllegalArgumentException("The list of values cannot be null or empty.");
+            throw new QueryServiceException("The list of values cannot be null or empty.");
         }
         if (size % 2 == 0) {
             medianValue = (sortedValues.get(size / 2 - 1) + sortedValues.get(size / 2)) / 2;
