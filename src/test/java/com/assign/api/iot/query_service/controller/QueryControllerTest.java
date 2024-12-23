@@ -11,7 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
@@ -204,6 +206,200 @@ public class QueryControllerTest {
         ).thenReturn(Optional.empty());
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/average-value")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void testGetSensorDeviceDataMinValueForGroup_Success() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+        mockResponse.put("THERMOSTAT", Optional.of(15.5));
+        mockResponse.put("HEART_RATE_METER", Optional.of(30.2));
+
+        when(ioTDataService.getSensorDeviceDataMinValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        String expectedJson = "{\"THERMOSTAT\":15.5,\"HEART_RATE_METER\":30.2}";
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/min-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
+    }
+    @Test
+    void testGetSensorDeviceDataMinValueForGroup_NotFound() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+
+        when(ioTDataService.getSensorDeviceDataMinValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/min-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void testGetSensorDeviceDataMaxValueForGroup_Success() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+        mockResponse.put("THERMOSTAT", Optional.of(15.5));
+        mockResponse.put("HEART_RATE_METER", Optional.of(30.2));
+
+        when(ioTDataService.getSensorDeviceDataMaxValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        String expectedJson = "{\"THERMOSTAT\":15.5,\"HEART_RATE_METER\":30.2}";
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/max-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
+    }
+    @Test
+    void testGetSensorDeviceDataMaxValueForGroup_NotFound() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+
+        when(ioTDataService.getSensorDeviceDataMaxValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/max-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void testGetSensorDeviceDataMedianValueForGroup_Success() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+        mockResponse.put("THERMOSTAT", Optional.of(15.5));
+        mockResponse.put("HEART_RATE_METER", Optional.of(30.2));
+
+        when(ioTDataService.getSensorDeviceDataMedianValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+        String expectedJson = "{\"THERMOSTAT\":15.5,\"HEART_RATE_METER\":30.2}";
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/median-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
+    }
+    @Test
+    void testGetSensorDeviceDataMedianValueForGroup_NotFound() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+
+        when(ioTDataService.getSensorDeviceDataMedianValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/median-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+    @Test
+    void testGetSensorDeviceDataAverageValueForGroup_Success() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+        mockResponse.put("THERMOSTAT", Optional.of(15.5));
+        mockResponse.put("HEART_RATE_METER", Optional.of(30.2));
+
+        String expectedJson = "{\"THERMOSTAT\":15.5,\"HEART_RATE_METER\":30.2}";
+
+        when(ioTDataService.getSensorDeviceDataAverageValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/average-value/group")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedJson));
+    }
+    @Test
+    void testGetSensorDeviceDataAverageValueForGroup_NotFound() throws Exception {
+
+        SensorDataQueryRequest request = new SensorDataQueryRequest();
+        request.setSensorDeviceType("THERMOSTAT");
+        request.setStart(1734422578553L);
+        request.setEnd(1734422585556L);
+        request.setSensorDeviceTypeList(List.of("THERMOSTAT","HEART_RATE_METER"));
+
+        Map<String, Optional<Double>> mockResponse = new HashMap<>();
+
+        when(ioTDataService.getSensorDeviceDataAverageValueForGroup(
+                request.getSensorDeviceTypeList(),
+                request.getStart(),
+                request.getEnd())
+        ).thenReturn(mockResponse);
+
+        mockMvc.perform(get("http://localhost:8083/api/query/readings/average-value/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isNotFound());
