@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.stream.Collectors;
 
 import java.util.Map;
 import java.util.Optional;
@@ -34,8 +35,11 @@ public class QueryController {
     @GetMapping("/min-value")
     public ResponseEntity<Double> getSensorDeviceDataMinValue(
             @RequestBody SensorDataQueryRequest queryRequest){
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataMinValue(queryRequest.getSensorDeviceType(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
+        Optional<Double> minValue = ioTDataService.getSensorDeviceDataMinValue(
+                queryRequest.getSensorDeviceType(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return minValue.map(ResponseEntity::ok)
                 .orElseGet(()-> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     @Operation(summary = "Get the median value of a specific sensor", description = "Fetches the median sensor reading for a specific sensor device type within a specified timeframe.")
@@ -46,9 +50,11 @@ public class QueryController {
     @GetMapping("/median-value")
     public ResponseEntity<Double> getSensorDeviceDataMedianValue(
             @RequestBody SensorDataQueryRequest queryRequest){
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataMedianValue(queryRequest.getSensorDeviceType(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Optional<Double> medianValue = ioTDataService.getSensorDeviceDataMedianValue(
+                queryRequest.getSensorDeviceType(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return medianValue.map(ResponseEntity::ok) .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     @Operation(summary = "Get the maximum value of a specific sensor", description = "Fetches the maximum sensor reading for a specific sensor device type within a specified timeframe.")
     @ApiResponses({
@@ -58,9 +64,11 @@ public class QueryController {
     @GetMapping("/max-value")
     public ResponseEntity<Double> getSensorDeviceDataMaxValue(
             @RequestBody SensorDataQueryRequest queryRequest){
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataMaxValue(queryRequest.getSensorDeviceType(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Optional<Double> maxValue = ioTDataService.getSensorDeviceDataMaxValue(
+                queryRequest.getSensorDeviceType(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return maxValue.map(ResponseEntity::ok) .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     @Operation(summary = "Get the average value of a specific sensor", description = "Fetches the average sensor reading for a specific sensor device type within a specified timeframe.")
     @ApiResponses({
@@ -70,9 +78,11 @@ public class QueryController {
     @GetMapping("/average-value")
     public ResponseEntity<Double> getSensorDeviceDataMaxAverageValue(
             @RequestBody SensorDataQueryRequest queryRequest) {
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataAverageValue(queryRequest.getSensorDeviceType(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Optional<Double> averageValue = ioTDataService.getSensorDeviceDataAverageValue(
+                queryRequest.getSensorDeviceType(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return averageValue.map(ResponseEntity::ok) .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     @Operation(summary = "Get the minimum value of a group of sensors", description = "Fetches the minimum sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
@@ -82,10 +92,11 @@ public class QueryController {
     @GetMapping("/min-value/group")
     public ResponseEntity<Map<String, Double>> getSensorDeviceDataMinValueGroup(
             @RequestBody SensorDataQueryRequest queryRequest){
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataMinValueForGroup(queryRequest.getSensorDeviceTypeList(),queryRequest.getStart(),queryRequest.getEnd()))
-                .filter(result -> !result.isEmpty())
-                .map(ResponseEntity::ok)
-                .orElseGet(()-> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Map<String, Optional<Double>> minValueGroup = ioTDataService.getSensorDeviceDataMinValueForGroup(
+                queryRequest.getSensorDeviceTypeList(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return getMapResponseEntity(minValueGroup);
     }
     @Operation(summary = "Get the median value of a group of sensors", description = "Fetches the median sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
@@ -95,9 +106,11 @@ public class QueryController {
     @GetMapping("/median-value/group")
     public ResponseEntity<Map<String, Double>> getSensorDeviceDataMedianValueGroup(
             @RequestBody SensorDataQueryRequest queryRequest){
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataMedianValueForGroup(queryRequest.getSensorDeviceTypeList(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Map<String, Optional<Double>> medianValueGroupResult = ioTDataService.getSensorDeviceDataMedianValueForGroup(
+                queryRequest.getSensorDeviceTypeList(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return getMapResponseEntity(medianValueGroupResult);
     }
     @Operation(summary = "Get the maximum value of a group of sensors", description = "Fetches the maximum sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
@@ -107,9 +120,11 @@ public class QueryController {
     @GetMapping("/max-value/group")
     public ResponseEntity<Map<String, Double>> getSensorDeviceDataMaxValueGroup(
             @RequestBody SensorDataQueryRequest queryRequest){
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataMaxValueForGroup(queryRequest.getSensorDeviceTypeList(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Map<String, Optional<Double>> maxValueGroup = ioTDataService.getSensorDeviceDataMaxValueForGroup(
+                queryRequest.getSensorDeviceTypeList(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return getMapResponseEntity(maxValueGroup);
     }
     @Operation(summary = "Get the average value of a group of sensors", description = "Fetches the average sensor reading for a provided group of sensor device types within a specified timeframe.")
     @ApiResponses({
@@ -119,8 +134,17 @@ public class QueryController {
     @GetMapping("/average-value/group")
     public ResponseEntity<Map<String, Double>> getSensorDeviceDataMaxAverageValueGroup(
             @RequestBody SensorDataQueryRequest queryRequest) {
-        return Optional.ofNullable(ioTDataService.getSensorDeviceDataAverageValueForGroup(queryRequest.getSensorDeviceTypeList(),queryRequest.getStart(),queryRequest.getEnd()))
-                .map(ResponseEntity::ok)
-                .orElseGet(()->ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Map<String, Optional<Double>> averageValueGroup = ioTDataService.getSensorDeviceDataAverageValueForGroup(
+                queryRequest.getSensorDeviceTypeList(),
+                queryRequest.getStart(),
+                queryRequest.getEnd());
+        return getMapResponseEntity(averageValueGroup);
+    }
+    private ResponseEntity<Map<String, Double>> getMapResponseEntity(Map<String, Optional<Double>> valueGroup) {
+        Map<String, Double> maxValueGroupResult = valueGroup.entrySet().stream()
+                .filter(entry -> entry.getValue().isPresent())
+                .collect(Collectors.toMap( Map.Entry::getKey, entry -> entry.getValue().get()
+                ));
+        return maxValueGroupResult.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).build() : ResponseEntity.ok(maxValueGroupResult);
     }
 }

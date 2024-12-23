@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,7 +47,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(minValue);
+        ).thenReturn(Optional.of(minValue));
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/min-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +69,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(null);
+        ).thenReturn(Optional.empty());
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/min-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +91,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(medianValue);
+        ).thenReturn(Optional.of(medianValue));
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/median-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +113,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(null);
+        ).thenReturn(Optional.empty());
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/median-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +135,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(maxValue);
+        ).thenReturn(Optional.of(maxValue));
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/max-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -156,7 +157,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(null);
+        ).thenReturn(Optional.empty());
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/max-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -178,7 +179,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(averageValue);
+        ).thenReturn(Optional.of(averageValue));
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/average-value")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -200,7 +201,7 @@ public class QueryControllerTest {
                 request.getSensorDeviceType(),
                 request.getStart(),
                 request.getEnd())
-        ).thenReturn(null);
+        ).thenReturn(Optional.empty());
 
         mockMvc.perform(get("http://localhost:8083/api/query/readings/average-value")
                         .contentType(MediaType.APPLICATION_JSON)

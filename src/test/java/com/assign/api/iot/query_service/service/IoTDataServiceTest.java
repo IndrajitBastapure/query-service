@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -47,10 +48,10 @@ public class IoTDataServiceTest  {
         when(converter.convert(mockDataList.get(0))).thenReturn(dtoObject1);
         when(converter.convert(mockDataList.get(1))).thenReturn(dtoObject2);
 
-        Double minValue = ioTDataService.getSensorDeviceDataMinValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> minValue = ioTDataService.getSensorDeviceDataMinValue(sensorDeviceType, startDate, endDate);
 
         assertNotNull(minValue);
-        assertEquals(25.5, minValue);
+        assertEquals(25.5, minValue.get());
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, times(2)).convert(any(IoTData.class));
@@ -66,10 +67,10 @@ public class IoTDataServiceTest  {
         when(ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate))
                 .thenReturn(Collections.emptyList());
 
-        Double minValue = ioTDataService.getSensorDeviceDataMinValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> minValue = ioTDataService.getSensorDeviceDataMinValue(sensorDeviceType, startDate, endDate);
 
         assertNotNull(minValue);
-        assertEquals(0.0, minValue);
+        assertEquals(Optional.empty(), minValue);
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, never()).convert(any(IoTData.class));
@@ -94,10 +95,10 @@ public class IoTDataServiceTest  {
         when(converter.convert(mockDataList.get(0))).thenReturn(dtoObject1);
         when(converter.convert(mockDataList.get(1))).thenReturn(dtoObject2);
 
-        Double maxValue = ioTDataService.getSensorDeviceDataMaxValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> maxValue = ioTDataService.getSensorDeviceDataMaxValue(sensorDeviceType, startDate, endDate);
 
-        assertNotNull(maxValue);
-        assertEquals(27.0, maxValue);
+        assertNotNull(maxValue.get());
+        assertEquals(27.0, maxValue.get());
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, times(2)).convert(any(IoTData.class));
@@ -112,10 +113,10 @@ public class IoTDataServiceTest  {
         when(ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate))
                 .thenReturn(Collections.emptyList());
 
-        Double maxValue = ioTDataService.getSensorDeviceDataMaxValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> maxValue = ioTDataService.getSensorDeviceDataMaxValue(sensorDeviceType, startDate, endDate);
 
         assertNotNull(maxValue);
-        assertEquals(0.0, maxValue);
+        assertEquals(Optional.empty(), maxValue);
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, never()).convert(any(IoTData.class));
@@ -140,10 +141,10 @@ public class IoTDataServiceTest  {
         when(converter.convert(mockDataList.get(0))).thenReturn(dtoObject1);
         when(converter.convert(mockDataList.get(1))).thenReturn(dtoObject2);
 
-        Double medianValue = ioTDataService.getSensorDeviceDataMedianValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> medianValue = ioTDataService.getSensorDeviceDataMedianValue(sensorDeviceType, startDate, endDate);
 
         assertNotNull(medianValue);
-        assertEquals(26.25, medianValue);
+        assertEquals(26.25, medianValue.get());
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, times(2)).convert(any(IoTData.class));
@@ -159,10 +160,13 @@ public class IoTDataServiceTest  {
         when(ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate))
                 .thenReturn(Collections.emptyList());
 
-        IllegalArgumentException thrown = assertThrows(
-                IllegalArgumentException.class,
-                () -> ioTDataService.getSensorDeviceDataMedianValue(sensorDeviceType, startDate, endDate), "Expected getSensorDeviceDataMedianValue to throw IllegalArgumentException" ); assertTrue(thrown.getMessage().contains("The list of values cannot be null or empty."));
-    }
+        Optional<Double> medianValue = ioTDataService.getSensorDeviceDataMedianValue(sensorDeviceType, startDate, endDate);
+
+        assertNotNull(medianValue);
+        assertEquals(Optional.empty(), medianValue);
+        verify(ioTDataCustomRepository, times(1))
+                .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
+        verify(converter, never()).convert(any(IoTData.class));    }
 
     @Test
     void testGetSensorDeviceDataAverageValue_Success() {
@@ -183,10 +187,10 @@ public class IoTDataServiceTest  {
         when(converter.convert(mockDataList.get(0))).thenReturn(dtoObject1);
         when(converter.convert(mockDataList.get(1))).thenReturn(dtoObject2);
 
-        Double averageValue = ioTDataService.getSensorDeviceDataAverageValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> averageValue = ioTDataService.getSensorDeviceDataAverageValue(sensorDeviceType, startDate, endDate);
 
         assertNotNull(averageValue);
-        assertEquals(26.25, averageValue);
+        assertEquals(26.25, averageValue.get());
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, times(2)).convert(any(IoTData.class));
@@ -201,10 +205,10 @@ public class IoTDataServiceTest  {
         when(ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate))
                 .thenReturn(Collections.emptyList());
 
-        Double averageValue = ioTDataService.getSensorDeviceDataAverageValue(sensorDeviceType, startDate, endDate);
+        Optional<Double> averageValue = ioTDataService.getSensorDeviceDataAverageValue(sensorDeviceType, startDate, endDate);
 
         assertNotNull(averageValue);
-        assertEquals(0.0, averageValue);
+        assertEquals(Optional.empty(), averageValue);
         verify(ioTDataCustomRepository, times(1))
                 .findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         verify(converter, never()).convert(any(IoTData.class));

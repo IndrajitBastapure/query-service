@@ -1,7 +1,6 @@
 package com.assign.api.iot.query_service.service;
 
 import com.assign.api.iot.query_service.dto.IoTDataDTO;
-import com.assign.api.iot.query_service.exceptions.QueryServiceException;
 import com.assign.api.iot.query_service.mapper.IoTDataToIoTDataDTOConverter;
 import com.assign.api.iot.query_service.model.IoTData;
 import com.assign.api.iot.query_service.repository.IoTDataCustomRepository;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,43 +26,49 @@ public class IoTDataService {
         this.converter = converter;
     }
 
-    public Double getSensorDeviceDataMinValue(String sensorDeviceType, Long startDate, Long endDate) {
+    public Optional<Double> getSensorDeviceDataMinValue(String sensorDeviceType, Long startDate, Long endDate) {
         logger.debug("Fetching MinValue for : {}",sensorDeviceType);
         List<IoTData> sensorDeviceData = ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         return sensorDeviceData.stream()
                 .map(converter::convert)
                 .mapToDouble(data-> data.getValue())
                 .min()
-                .orElseThrow(() -> new QueryServiceException("No data found for the specified sensor and time range"));
+                .stream()
+                .boxed()
+                .findFirst();
     }
 
-    public Double getSensorDeviceDataMaxValue(String sensorDeviceType, Long startDate, Long endDate) {
+    public Optional<Double> getSensorDeviceDataMaxValue(String sensorDeviceType, Long startDate, Long endDate) {
         logger.debug("Fetching MaxValue for : {}",sensorDeviceType);
         List<IoTData> sensorDeviceData = ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         return sensorDeviceData.stream()
                 .map(converter::convert)
                 .mapToDouble(data-> data.getValue())
                 .max()
-                .orElseThrow(() -> new QueryServiceException("No data found for the specified sensor and time range"));
+                .stream()
+                .boxed()
+                .findFirst();
     }
 
-    public Double getSensorDeviceDataMedianValue(String sensorDeviceType, Long startDate, Long endDate) {
+    public Optional<Double> getSensorDeviceDataMedianValue(String sensorDeviceType, Long startDate, Long endDate) {
         logger.debug("Fetching MediaValue for : {}",sensorDeviceType);
         List<IoTData> sensorDeviceData = ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         return getMedianValue(sensorDeviceData);
     }
 
-    public Double getSensorDeviceDataAverageValue(String sensorDeviceType, Long startDate, Long endDate) {
+    public Optional<Double> getSensorDeviceDataAverageValue(String sensorDeviceType, Long startDate, Long endDate) {
         logger.debug("Fetching AverageValue for : {}",sensorDeviceType);
         List<IoTData> sensorDeviceData = ioTDataCustomRepository.findBySensorDeviceTypeAndTimestampBetween(sensorDeviceType, startDate, endDate);
         return sensorDeviceData.stream()
                 .map(converter::convert)
                 .mapToDouble(data-> data.getValue())
                 .average()
-                .orElseThrow(() -> new QueryServiceException("No data found for the specified sensor and time range"));
+                .stream()
+                .boxed()
+                .findFirst();
     }
 
-    public Map<String, Double> getSensorDeviceDataMinValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
+    public Map<String, Optional<Double>> getSensorDeviceDataMinValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
         logger.debug("Fetching MinValue for group: {}",sensorDeviceTypeList);
         List<IoTData> sensorDeviceDataList = ioTDataCustomRepository.findBySensorDeviceTypesAndTimestampBetween(sensorDeviceTypeList, startDate, endDate);
         return sensorDeviceDataList.stream()
@@ -73,16 +79,10 @@ public class IoTDataService {
                                 IoTDataDTO::getValue,
                                 Collectors.minBy(Double::compareTo)
                         )
-                ))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue().isPresent())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().get()
                 ));
     }
 
-    public Map<String, Double> getSensorDeviceDataMaxValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
+    public Map<String, Optional<Double>> getSensorDeviceDataMaxValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
         logger.debug("Fetching MaxValue for group: {}",sensorDeviceTypeList);
         List<IoTData> sensorDeviceDataList = ioTDataCustomRepository.findBySensorDeviceTypesAndTimestampBetween(sensorDeviceTypeList, startDate, endDate);
         return sensorDeviceDataList.stream()
@@ -93,52 +93,27 @@ public class IoTDataService {
                                 IoTDataDTO::getValue,
                                 Collectors.maxBy(Double::compareTo)
                         )
-                ))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue().isPresent())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().get()
                 ));
     }
 
-    public Map<String, Double> getSensorDeviceDataMedianValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
+    public Map<String, Optional<Double>> getSensorDeviceDataMedianValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
         logger.debug("Fetching MedianValue for group: {}",sensorDeviceTypeList);
         List<IoTData> sensorDeviceDataList = ioTDataCustomRepository.findBySensorDeviceTypesAndTimestampBetween(sensorDeviceTypeList, startDate, endDate);
         return getMedianValueForGroup(sensorDeviceDataList);
     }
 
-    public Map<String, Double> getSensorDeviceDataAverageValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
+    public Map<String, Optional<Double>> getSensorDeviceDataAverageValueForGroup(List<String> sensorDeviceTypeList, Long startDate, Long endDate) {
         logger.debug("Fetching AverageValue for group: {}",sensorDeviceTypeList);
         List<IoTData> sensorDeviceDataList = ioTDataCustomRepository.findBySensorDeviceTypesAndTimestampBetween(sensorDeviceTypeList, startDate, endDate);
         return sensorDeviceDataList.stream()
                 .map(converter::convert)
                 .collect(Collectors.groupingBy(
                         IoTDataDTO::getSensorDeviceType,
-                        Collectors.averagingDouble(IoTDataDTO::getValue)
+                        Collectors.collectingAndThen( Collectors.mapping(IoTDataDTO::getValue, Collectors.toList()), this::calculateAverage )
                 ));
     }
 
-    private Double getMedianValue(List<IoTData> sensorDeviceDataList) {
-        List<Double> sortedValues = sensorDeviceDataList.stream()
-                .map(converter::convert)
-                .map(data-> data.getValue())
-                .sorted()
-                .toList();
-        double medianValue;
-        int size = sortedValues.size();
-        if (sortedValues == null || sortedValues.isEmpty()) {
-            throw new QueryServiceException("The list of values cannot be null or empty.");
-        }
-        if (size % 2 == 0) {
-            medianValue = (sortedValues.get(size / 2 - 1) + sortedValues.get(size / 2)) / 2;
-        } else {
-            medianValue = sortedValues.get(size / 2);
-        }
-        return medianValue;
-    }
-
-    private Map<String, Double> getMedianValueForGroup(List<IoTData> sensorDeviceDataList) {
+    private Map<String, Optional<Double>> getMedianValueForGroup(List<IoTData> sensorDeviceDataList) {
         return sensorDeviceDataList.stream()
                 .map(converter::convert)
                 .collect(Collectors.groupingBy(
@@ -149,19 +124,46 @@ public class IoTDataService {
                         )
                 ));
     }
-    private Double calculateMedian(List<Double> values) {
-        if (values == null || values.isEmpty()) {
-            return 0.0;
+    private Optional<Double> calculateMedian(List<Double> values) {
+        if (values == null || values.isEmpty() || values.size() == 0) {
+            return Optional.empty();
         }
         List<Double> sortedValues = values.stream()
                 .sorted()
                 .toList();
-
         int size = sortedValues.size();
+        double medianValue;
         if (size % 2 == 0) {
-            return (sortedValues.get(size / 2 - 1) + sortedValues.get(size / 2)) / 2;
+            medianValue = (sortedValues.get(size / 2 - 1) + sortedValues.get(size / 2)) / 2;
         } else {
-            return sortedValues.get(size / 2);
+            medianValue = sortedValues.get(size / 2);
         }
+        return Optional.of(medianValue);
+    }
+    private Optional<Double> getMedianValue(List<IoTData> sensorDeviceDataList) {
+        List<Double> sortedValues = sensorDeviceDataList.stream()
+                .map(converter::convert)
+                .map(data-> data.getValue())
+                .sorted()
+                .toList();
+        double medianValue;
+        int size = sortedValues.size();
+        if (sortedValues == null || sortedValues.isEmpty() || size == 0) {
+            return Optional.empty();
+        }
+        if (size % 2 == 0) {
+            medianValue = (sortedValues.get(size / 2 - 1) + sortedValues.get(size / 2)) / 2;
+        } else {
+            medianValue = sortedValues.get(size / 2);
+        }
+        return Optional.of(medianValue);
+    }
+    private Optional<Double> calculateAverage(List<Double> values) {
+        if (values == null || values.isEmpty()) {
+            return Optional.empty();
+        }
+        double sum = values.stream().mapToDouble(Double::doubleValue).sum();
+        double average = sum / values.size();
+        return Optional.of(average);
     }
 }
